@@ -3,6 +3,7 @@
 namespace SwooleTW\Http\Server;
 
 use Exception;
+use function PHPSTORM_META\override;
 use Throwable;
 use Swoole\Process;
 use Swoole\Server\Task;
@@ -95,7 +96,6 @@ class Manager extends Event
      */
     public function run()
     {
-
         // initialize  listeners and server
         $this->initialize();
 

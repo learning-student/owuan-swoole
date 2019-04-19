@@ -21,7 +21,7 @@ class Caching
     /**
      * @var array
      */
-    public static $cacheRoutes = [];
+    private  $cacheRoutes = [];
 
     /**
      * @var  Cache
@@ -44,6 +44,17 @@ class Caching
         $this->initializeCacheDriverWithConfigs($swooleCacheconfig);
     }
 
+
+    /**
+     * @param string $add
+     * @return $this
+     */
+    public function cacheRoute(string $add) : self
+    {
+        $this->cacheRoutes[] = $add;
+
+        return $this;
+    }
 
     /**
      * @param array $config

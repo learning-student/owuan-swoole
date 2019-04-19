@@ -24,8 +24,8 @@ class SwooleLumenRouter extends Router
         // save only GET routes
         if ($method === 'GET' && is_array($action) && isset($action['cache'])) {
 
-            // todo: remove static propery in future
-            Caching::$cacheRoutes[] = $uri;
+            $this->app->make(Caching::class)->cacheRoute($uri);
+
         }
     }
 }

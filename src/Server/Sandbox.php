@@ -39,7 +39,7 @@ class Sandbox
      */
     public function __construct($app = null, $framework = null)
     {
-        if (! $app instanceof Container) {
+        if (!$app instanceof Container) {
             return;
         }
 
@@ -119,7 +119,7 @@ class Sandbox
      */
     public function initialize()
     {
-        if (! $this->app instanceof Container) {
+        if (!$this->app instanceof Container) {
             throw new SandboxException('A base app has not been set.');
         }
 
@@ -148,6 +148,7 @@ class Sandbox
     public function getApplication()
     {
         $snapshot = $this->getSnapshot();
+
         if ($snapshot instanceOf Container) {
             return $snapshot;
         }
@@ -169,7 +170,7 @@ class Sandbox
      */
     public function run(Request $request)
     {
-        if (! $this->getSnapshot() instanceof Container) {
+        if (!$this->getSnapshot() instanceof Container) {
             throw new SandboxException('Sandbox is not enabled.');
         }
 
@@ -219,19 +220,22 @@ class Sandbox
         // prepare content for ob
         $content = '';
         $isFile = false;
-        if ($isStream = $response instanceof StreamedResponse) {
+
+        $isStream = $response instanceof StreamedResponse;
+
+        if ($isStream) {
             $response->sendContent();
         } elseif ($response instanceof SymfonyResponse) {
             $content = $response->getContent();
-        } elseif (! $isFile = $response instanceof BinaryFileResponse) {
-            $content = (string) $response;
+        } elseif (!$isFile = $response instanceof BinaryFileResponse) {
+            $content = (string)$response;
         }
 
         // process terminating logics
         $this->terminate($request, $response);
 
         // append ob content to response
-        if (! $isFile && ob_get_length() > 0) {
+        if (!$isFile && ob_get_length() > 0) {
             if ($isStream) {
                 $response->output = ob_get_contents();
             } else {
@@ -311,7 +315,7 @@ class Sandbox
      */
     public function enable()
     {
-        if (! $this->config instanceof ConfigContract) {
+        if (!$this->config instanceof ConfigContract) {
             throw new SandboxException('Please initialize after setting base app.');
         }
 

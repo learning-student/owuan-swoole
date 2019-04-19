@@ -22,6 +22,11 @@ class Response
      */
     protected $illuminateResponse;
 
+
+    /**
+     * @var array
+     */
+    public static $headers = [];
     /**
      * Make a response.
      *
