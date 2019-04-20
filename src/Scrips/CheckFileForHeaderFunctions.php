@@ -106,6 +106,8 @@ class CheckFileForHeaderFunctions
                 return false;
             }
 
+
+
             return in_array($node->name->toLowerString(), static::$functionNames, true);
 
         });
