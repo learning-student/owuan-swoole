@@ -50,7 +50,16 @@ abstract class HttpServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->registerDatabaseDriver();
         $this->registerSwooleQueueDriver();
+
     }
+
+
+    /**
+     * register event manager
+     *
+     * @return void
+     */
+    abstract protected function registerEventManager() : void;
 
     /**
      * Register manager.
@@ -150,9 +159,9 @@ abstract class HttpServiceProvider extends ServiceProvider
         $options = $config->get('swoole_http.server.options');
 
         // only enable task worker in websocket mode and for queue driver
-        if ($config->get('queue.default') !== 'swoole' && ! $this->isWebsocket) {
-            unset($options['task_worker_num']);
-        }
+        //if ($config->get('queue.default') !== 'swoole' && ! $this->isWebsocket) {
+            //unset($options['task_worker_num']);
+        //}
 
         static::$server->set($options);
     }

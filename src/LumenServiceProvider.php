@@ -2,6 +2,7 @@
 
 namespace SwooleTW\Http;
 
+use SwooleTW\Http\Event\Event;
 use SwooleTW\Http\Server\Manager;
 use SwooleTW\Http\Middleware\AccessLog;
 
@@ -10,6 +11,17 @@ use SwooleTW\Http\Middleware\AccessLog;
  */
 class LumenServiceProvider extends HttpServiceProvider
 {
+
+    /**
+     *  register event manager
+     */
+    protected function registerEventManager(): void
+    {
+        $this->app->singleton(Event::class, Event::class);
+        $this->app->alias(Event::class, 'swoole.event');
+
+    }
+
     /**
      * Register manager.
      *

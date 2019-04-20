@@ -9,15 +9,6 @@
     "http",
     "server"
   ],
-  "repositories": [
-    {
-      "type": "path",
-      "url": "../Anonym-Cache",
-      "options": {
-        "symlink": true
-      }
-    }
-  ],
   "license": "MIT",
   "authors": [
     {
@@ -43,7 +34,8 @@
     "illuminate/http": "~5.4",
     "illuminate/support": "~5.4",
     "predis/predis": "^1.1",
-    "owuan/owuan-cache": "@dev"
+    "nikic/php-parser": "^4.2",
+    "owuan/owuan-cache": "^1.0"
   },
   "require-dev": {
     "laravel/lumen-framework": "~5.4",
@@ -85,6 +77,12 @@
   "scripts": {
     "post-autoload-dump": [
       "@php copy_versioned_files.php"
+    ],
+    "post-package-install": [
+      "SwooleTW\\Http\\Scrips\\ComposerScripts::postUpdate"
+    ],
+    "pre-package-uninstall": [
+      "SwooleTW\\Http\\Scrips\\ComposerScripts::preUninstall"
     ]
   }
 }

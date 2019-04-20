@@ -23,6 +23,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use SwooleTW\Http\Concerns\InteractsWithSwooleQueue;
 use SwooleTW\Http\Concerns\InteractsWithSwooleTable;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
+use SwooleTW\Http\Event\EventBase;
 
 /**
  * Class Manager
@@ -51,7 +52,10 @@ class Manager extends Event
      */
     protected $basePath;
 
-
+    /**
+     * @var bool
+     */
+    protected $started = false;
     /**
      * Server events.
      *
@@ -114,11 +118,17 @@ class Manager extends Event
     /**
      * Initialize.
      */
-    protected function initialize()
+    public function initialize()
     {
+        if ($this->started === true) {
+            return null;
+        }
+
         $this->createTables();
         $this->prepareWebsocket();
         $this->setSwooleServerListeners();
+
+        $this->started = true;
     }
 
     /**
@@ -176,10 +186,9 @@ class Manager extends Event
         // don't init laravel app in task workers
         if ($server->taskworker) {
             $this->setProcessName('task process');
-
-            return;
+        } else {
+            $this->setProcessName('worker process');
         }
-        $this->setProcessName('worker process');
 
         // clear events instance in case of repeated listeners in worker process
         Facade::clearResolvedInstance('events');
@@ -199,10 +208,9 @@ class Manager extends Event
 
 
     /**
-     * "onRequest" listener.
-     *
      * @param \Swoole\Http\Request $swooleRequest
      * @param \Swoole\Http\Response $swooleResponse
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function onRequest($swooleRequest, $swooleResponse)
     {
@@ -243,7 +251,6 @@ class Manager extends Event
             }
 
 
-
             // transform swoole request to illuminate request
             $illuminateRequest = Request::make($swooleRequest)->toIlluminate();
 
@@ -267,9 +274,12 @@ class Manager extends Event
                 $illuminateRequest,
                 $illuminateResponse
             ]);
-            
+
         } catch (Throwable $e) {
-            dd($e);
+            // transform swoole request to illuminate request
+            $illuminateRequest = Request::make($swooleRequest)->toIlluminate();
+
+
             try {
                 $exceptionResponse = $this->app
                     ->make(ExceptionHandler::class)
@@ -305,16 +315,25 @@ class Manager extends Event
      * @param string|\Swoole\Server\Task $taskId or $task
      * @param string $srcWorkerId
      * @param mixed $data
+     * @throws 
      */
     public function onTask($server, $taskId, $srcWorkerId, $data)
     {
+
+
         $this->container->make('events')->dispatch('swoole.task', func_get_args());
 
         try {
+
             // push websocket message
             if ($this->isWebsocketPushPayload($data)) {
                 $this->pushMessage($server, $data['data']);
                 // push async task to queue
+            } elseif ($data instanceof EventBase) {
+
+                // resolve event in this worker
+                event($data);
+
             } elseif ($this->isAsyncTaskPayload($data)) {
                 (new SwooleTaskJob($this->container, $server, $data, $taskId, $srcWorkerId))->fire();
             }
@@ -335,7 +354,8 @@ class Manager extends Event
         // task worker callback
         $this->container->make('events')->dispatch('swoole.finish', func_get_args());
 
-        return;
+
+        return true;
     }
 
     /**

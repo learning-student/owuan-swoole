@@ -66,7 +66,7 @@ trait InteractsWithWebsocket
             // enable sandbox
             $sandbox->enable();
             // check if socket.io connection established
-            if (! $this->websocketHandler->onOpen($swooleRequest->fd, $illuminateRequest)) {
+            if (!$this->websocketHandler->onOpen($swooleRequest->fd, $illuminateRequest)) {
                 return;
             }
             // trigger 'connect' websocket event
@@ -130,7 +130,7 @@ trait InteractsWithWebsocket
      */
     public function onClose($server, $fd, $reactorId)
     {
-        if (! $this->isServerWebsocket($fd) || ! $server instanceof WebsocketServer) {
+        if (!$server instanceof WebsocketServer || !$this->isServerWebsocket($fd)) {
             return;
         }
 
@@ -158,7 +158,7 @@ trait InteractsWithWebsocket
      */
     protected function isWebsocketPushPacket($packet)
     {
-        if (! is_array($packet)) {
+        if (!is_array($packet)) {
             return false;
         }
 
@@ -230,8 +230,8 @@ trait InteractsWithWebsocket
      */
     protected function isServerWebsocket(int $fd): bool
     {
-        return (bool) $this->container->make(Server::class)
-            ->connection_info($fd)['websocket_status'] ?? false;
+        return (bool)$this->container->make(Server::class)
+                ->connection_info($fd)['websocket_status'] ?? false;
     }
 
     /**
@@ -243,7 +243,7 @@ trait InteractsWithWebsocket
     {
         $handlerClass = $this->container->make('config')->get('swoole_websocket.handler');
 
-        if (! $handlerClass) {
+        if (!$handlerClass) {
             throw new WebsocketNotSetInConfigException;
         }
 
@@ -326,7 +326,7 @@ trait InteractsWithWebsocket
         $routePath = $this->container->make('config')
             ->get('swoole_websocket.route_file');
 
-        if (! file_exists($routePath)) {
+        if (!file_exists($routePath)) {
             $routePath = __DIR__ . '/../../routes/websocket.php';
         }
 
@@ -342,7 +342,7 @@ trait InteractsWithWebsocket
      */
     public function isWebsocketPushPayload($payload): bool
     {
-        if (! is_array($payload)) {
+        if (!is_array($payload)) {
             return false;
         }
 

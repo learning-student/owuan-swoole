@@ -138,7 +138,7 @@ class Caching
      */
     private function checkAllCachedRoutes($request): bool
     {
-        foreach (static::$cacheRoutes as $cacheRoute) {
+        foreach ($this->cacheRoutes as $cacheRoute) {
             if ($request->is($cacheRoute)) {
                 return true;
             }

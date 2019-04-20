@@ -2,6 +2,7 @@
 
 namespace SwooleTW\Http;
 
+use SwooleTW\Http\Event\Event;
 use SwooleTW\Http\Server\Manager;
 use Illuminate\Contracts\Http\Kernel;
 use SwooleTW\Http\Middleware\AccessLog;
@@ -11,6 +12,17 @@ use SwooleTW\Http\Middleware\AccessLog;
  */
 class LaravelServiceProvider extends HttpServiceProvider
 {
+
+    /**
+     * register event manager
+     */
+    protected function registerEventManager() : void
+    {
+        $this->app->singleton(Event::class, Event::class);
+        $this->app->alias(Event::class, 'swoole.event');
+
+    }
+
     /**
      * Register manager.
      *
@@ -37,8 +49,8 @@ class LaravelServiceProvider extends HttpServiceProvider
 
 
     /**
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      * @return void
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     protected function pushAccessLogMiddleware()
     {
