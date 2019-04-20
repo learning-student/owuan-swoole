@@ -51,6 +51,7 @@ trait WithApplication
      */
     protected function loadApplication()
     {
+
         return require "{$this->basePath}/bootstrap/app.php";
     }
 
@@ -60,6 +61,7 @@ trait WithApplication
      */
     public function getApplication()
     {
+
         if (! $this->app instanceof Container) {
             $this->app = $this->loadApplication();
             $this->bootstrap();

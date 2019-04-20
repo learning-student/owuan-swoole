@@ -14,6 +14,11 @@ class ComposerScripts
      */
     public static function preUninstall(PackageEvent $event): void
     {
+
+        if (!class_exists('PhpParser\ParserFactory')) {
+            return;
+        }
+
         $allPhp = static::getAllPhpFiles(
             static::findOriginDir($event)
         );
@@ -110,6 +115,9 @@ class ComposerScripts
      */
     public static function postUpdate(PackageEvent $event): bool
     {
+        if (!class_exists('PhpParser\ParserFactory')) {
+            return false;
+        }
 
         try {
             $originDir = static::findOriginDir($event);

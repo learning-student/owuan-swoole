@@ -580,7 +580,6 @@ class ManagerTest extends TestCase
         $manager = new Manager($container ?: $this->getContainer(), $framework, $path);
         $manager->initialize();
 
-
         return $manager;
     }
 
