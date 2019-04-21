@@ -13,6 +13,10 @@ class ComposerScriptsTest extends TestCase
 {
 
 
+    /**
+     * @covers \SwooleTW\Http\Scrips\ComposerScripts::postUpdate
+     * @covers \SwooleTW\Http\Scrips\ComposerScripts::runPostUpdate
+     */
     public function testComposerPostUpdateCreatesFilesSuccessfully()
     {
         $mock = new MonkeyPatching();
@@ -91,6 +95,7 @@ CODE;
 
     /**
      * @covers \SwooleTW\Http\Scrips\ComposerScripts::runPostUninstalScript
+     * @covers \SwooleTW\Http\Scrips\ComposerScripts::preUninstall
      */
     public function testComposerPostUninstallRemovesFiles()
     {

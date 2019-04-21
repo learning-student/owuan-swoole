@@ -81,7 +81,6 @@ CODE;
     }
 
 
-
     /**
      * autoload all auto-generated patching files
      */
@@ -98,11 +97,40 @@ CODE;
         return true;
     }
 
+
+    /**
+     * @param string $namespace
+     * @return string
+     */
+    public function createStubName(string $namespace): string
+    {
+
+        $fileName = str_replace('\\', '_', $namespace) . '.php';
+
+        $fileName = mb_convert_case(
+            $fileName,
+            MB_CASE_LOWER
+        );
+
+        return $fileName;
+    }
+
+    /**
+     * @param string $namespace
+     * @return bool
+     */
+    public function removeOldStub(string $namespace): bool
+    {
+        $file = $this->createStubName($namespace);
+
+        return unlink($this->getPatchinDir() . $file);
+    }
+
     /**
      * @param string $name
      * @param string $namespace
      */
-    public function createStub( string $namespace)
+    public function createStub(string $namespace)
     {
 
 
@@ -121,7 +149,7 @@ $stubTemplate
 EOT;
 
 
-        $fileName = str_replace('\\', '_', $namespace)  . '.php';
+        $fileName = str_replace('\\', '_', $namespace) . '.php';
 
         $fileName = mb_convert_case(
             $fileName,

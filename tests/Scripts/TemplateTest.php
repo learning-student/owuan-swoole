@@ -5,6 +5,11 @@ namespace SwooleTW\Http\Tests\Scripts;
 use PHPUnit\Framework\TestCase;
 use SwooleTW\Http\Scrips\Template;
 
+/**
+ * Class TemplateTest
+ * @package SwooleTW\Http\Tests\Scripts
+ * @covers \SwooleTW\Http\Scrips\Template
+ */
 class TemplateTest extends TestCase
 {
 
@@ -21,7 +26,7 @@ namespace test;
 CODE;
 
     /**
-     *
+     * @covers \SwooleTW\Http\Scrips\Template::prepare
      */
     public function testTemplateGeneratesSameOutput(): void
     {
