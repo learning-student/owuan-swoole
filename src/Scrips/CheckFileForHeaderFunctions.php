@@ -61,7 +61,7 @@ class CheckFileForHeaderFunctions
         return strpos(
                 $content,
                 "$name("
-            ) !== false || strpos($content, "$name (");
+            ) !== false || strpos($content, "$name (") !== false;
     }
 
 
@@ -72,7 +72,7 @@ class CheckFileForHeaderFunctions
     private function checkFunctions(string $content)
     {
         foreach (static::$functionNames as $functionName) {
-            if ($this->checkForFunctionExists($functionName, $content) === false) {
+            if ($this->checkForFunctionExists($functionName, $content) === true) {
                 return true;
             }
         }
@@ -92,6 +92,7 @@ class CheckFileForHeaderFunctions
 
         $content = file_get_contents($filename);
 
+
         if ($this->checkFunctions($content) === false) {
 
             return false;
@@ -100,6 +101,8 @@ class CheckFileForHeaderFunctions
         $ast = $this->parsePhpContent($content);
 
         $nodeFinder = new NodeFinder;
+
+        $nodeFinder->findInstanceOf($ast, Node\Expr\FuncCall::class);
 
         $findedFunctions = $nodeFinder->find($ast, function (Node $node) {
             if (!$node instanceof Node\Expr\FuncCall) {
