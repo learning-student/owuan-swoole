@@ -102,7 +102,6 @@ class CheckFileForHeaderFunctions
 
         $nodeFinder = new NodeFinder;
 
-        $nodeFinder->findInstanceOf($ast, Node\Expr\FuncCall::class);
 
         $findedFunctions = $nodeFinder->find($ast, function (Node $node) {
             if (!$node instanceof Node\Expr\FuncCall) {
