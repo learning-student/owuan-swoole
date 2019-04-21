@@ -107,8 +107,13 @@ class CheckFileForHeaderFunctions
             }
 
 
+            if (!method_exists($node->name, "getFirst")) {
+                return false;
+            }
 
-            return in_array($node->name->toLowerString(), static::$functionNames, true);
+            $name = $node->name->getFirst();
+
+            return in_array($name, static::$functionNames, true);
 
         });
 
