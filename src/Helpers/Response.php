@@ -3,7 +3,11 @@
 
 namespace SwooleTW\Http\Helpers;
 
-
+/**
+ * Class Response
+ * @package SwooleTW\Http\Helpers
+ * @codeCoverageIgnore
+ */
 class Response
 {
 

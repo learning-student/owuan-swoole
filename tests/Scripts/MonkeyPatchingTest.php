@@ -9,10 +9,32 @@ use SwooleTW\Http\Tests\TestCase;
 /**
  * Class MonkeyPatchingTest
  * @package SwooleTW\Http\Tests\Scripts
+ * @covers \SwooleTW\Http\Scrips\MonkeyPatching
  */
 class MonkeyPatchingTest extends TestCase
 {
 
+    /**
+     * @throws \ReflectionException
+     */
+    public function testConstructorCallsInternalMethods()
+    {
+        $classname = MonkeyPatching::class;
+
+        // Get mock, without the constructor being called
+        $mock = $this->getMockBuilder($classname)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // set expectations for constructor calls
+        $mock->expects($this->once())
+            ->method('setPatchinDir');
+
+        // now call the constructor
+        $reflectedClass = new \ReflectionClass($classname);
+        $constructor = $reflectedClass->getConstructor();
+        $constructor->invoke($mock);
+    }
 
     /**
      * @covers \SwooleTW\Http\Scrips\MonkeyPatching::setPatchinDir
@@ -58,6 +80,21 @@ class MonkeyPatchingTest extends TestCase
         $file = $monkey->getPatchinDir() . $monkey->createStubName($namespace);
 
         $this->assertFileExists($file);
+    }
+
+    /**
+     * @covers \SwooleTW\Http\Scrips\MonkeyPatching::autoloadAllPatchingFiles
+     */
+    public function testAutoloadSuccess()
+    {
+        $monkey = new MonkeyPatching();
+        $monkey->setPatchinDir(dirname(__DIR__) . '/fixtures/patcing/');
+
+        $monkey->autoloadAllPatchingFiles();
+
+        $exists = function_exists('Owuan\Swoole\Test\header');
+
+        $this->assertTrue($exists);
     }
 
 

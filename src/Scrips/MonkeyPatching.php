@@ -56,10 +56,10 @@ CODE;
      */
     public function __construct()
     {
-        $this->patchinDir = dirname(__DIR__, 2) .
+        $this->setPatchinDir(dirname(__DIR__, 2) .
             DIRECTORY_SEPARATOR .
             'patching' .
-            DIRECTORY_SEPARATOR;
+            DIRECTORY_SEPARATOR);
     }
 
     /**

@@ -21,6 +21,7 @@ class Event
      */
     public function fire(EventBase $event): bool
     {
+
         app()->make(Server::class)
             ->task($event);
 

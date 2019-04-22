@@ -8,13 +8,69 @@ use PHPUnit\Framework\TestCase;
 use SwooleTW\Http\Scrips\CheckFileForHeaderFunctions;
 use SwooleTW\Http\Scrips\ComposerScripts;
 use SwooleTW\Http\Scrips\MonkeyPatching;
+use Composer\Installer\PackageEvent;
+use Composer\DependencyResolver\Operation\OperationInterface;
+use Composer\Composer;
+use Composer\Installer\InstallationManager;
 
 class ComposerScriptsTest extends TestCase
 {
 
 
+
+    public function getMock()
+    {
+
+        $mock = Mockery::mock(PackageEvent::class);
+
+        $operationMock = Mockery::mock(OperationInterface::class);
+
+        $operationMock->shouldReceive('getPackage')
+            ->once()
+            ->andReturn("vserifsaglam/owuan-test");
+
+
+        $installationManagerMock = Mockery::mock(InstallationManager::class);
+
+        $installationManagerMock->shouldReceive('getInstallPath')
+            ->once()
+            ->andReturn(dirname(__DIR__).'/fixtures/packages/');
+
+        $composerMock = Mockery::mock(Composer\Composer::class);
+
+        $composerMock->shouldReceive('getInstallationManager')
+            ->once()
+            ->andReturn($installationManagerMock);
+
+        $mock->shouldReceive('getOperation')
+            ->once()
+            ->andReturn($operationMock);
+
+        $mock->shouldReceive('getComposer')
+            ->once()
+            ->andReturn($composerMock);
+
+        return $mock;
+    }
+
+    public function testComposerPostupdate()
+    {
+
+        $response = ComposerScripts::postUpdate($this->getMock());
+
+        $this->assertTrue($response);
+    }
+
+
+    public function testComposerPreUninstall()
+    {
+        $response = ComposerScripts::preUninstall($this->getMock());
+
+        $this->assertTrue($response);
+    }
+
+
     /**
-     * @covers \SwooleTW\Http\Scrips\ComposerScripts::postUpdate
      * @covers \SwooleTW\Http\Scrips\ComposerScripts::runPostUpdate
      */
     public function testComposerPostUpdateCreatesFilesSuccessfully()

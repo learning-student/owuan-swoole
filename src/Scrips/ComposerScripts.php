@@ -11,69 +11,34 @@ class ComposerScripts
 
     /**
      * @param PackageEvent $event
+     * @return  bool
      */
-    public static function preUninstall(PackageEvent $event): void
+    public static function preUninstall(PackageEvent $event): bool
     {
 
         if (!class_exists('PhpParser\ParserFactory')) {
-            return;
+            return false;
         }
 
-        $allPhp = static::getAllPhpFiles(
-            static::findOriginDir($event)
-        );
-
-
-        $patching = new MonkeyPatching();
-
-        $files = glob(sprintf(
-            "%s*.php", $patching->getPatchinDir()
-        ), GLOB_BRACE);
-
-
-        // get all patching php files in patching directory
-        $patchinPhpFiles = array_map(function ($name) {
-            return basename($name, ".php");
-        }, $files);
-
-
-        // initialize checker
-        $check = new CheckFileForHeaderFunctions();
-        foreach ($allPhp as $file) {
-
-            // get installing php file's content
-            $content = file_get_contents($file);
-
-            // parse it's content
-            $parse = $check->parsePhpContent($content);
-
-            // get namespace from parsed content
-            $namespace = mb_convert_case(
-                $check->getNamespace($parse),
-                MB_CASE_LOWER
+        try {
+            $allPhp = static::getAllPhpFiles(
+                static::findOriginDir($event)
             );
 
 
-            // turn namespace  into file format
-            $namespace = str_replace('\\', '_', $namespace);
+            $patching = new MonkeyPatching();
 
-            $search = array_search($namespace, $patchinPhpFiles, true);
-            if ($search !== false) {
-
-                $path = $patching->getPatchinDir();
-
-                $path .= $patchinPhpFiles[$search] . '.php';
-
-                try {
-                    // remove file
-                    unlink($path);
-                } catch (\Exception $exception) {
-                    // do nothing
-                }
-
-            }
-
+            static::runPostUninstalScript(
+                $allPhp,
+                $patching
+            );
+        } catch (\Exception $exception) {
+            return false;
         }
+
+
+        return true;
+
 
     }
 
@@ -84,7 +49,6 @@ class ComposerScripts
         $files = glob(sprintf(
             "%s*.php", $patching->getPatchinDir()
         ), GLOB_BRACE);
-
 
 
         // get all patching php files in patching directory

@@ -45,7 +45,8 @@
     "php-coveralls/php-coveralls": "^2.1",
     "mockery/mockery": "~1.0",
     "codedungeon/phpunit-result-printer": "^0.14.0",
-    "php-mock/php-mock": "^2.0"
+    "php-mock/php-mock": "^2.0",
+    "orchestra/testbench": "^3.8"
   },
   "autoload": {
     "files": [
@@ -84,5 +85,8 @@
     "pre-package-uninstall": [
       "SwooleTW\\Http\\Scrips\\ComposerScripts::preUninstall"
     ]
+  },
+  "suggest": {
+    "owuan/owuan-cache" : "to cache your routes"
   }
 }

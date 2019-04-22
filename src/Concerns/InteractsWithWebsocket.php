@@ -237,14 +237,18 @@ trait InteractsWithWebsocket
     /**
      * Prepare websocket handler for onOpen and onClose callback.
      *
-     * @throws \Exception
+     * @throws \RuntimeException
      */
     protected function prepareWebsocketHandler()
     {
+
         $handlerClass = $this->container->make('config')->get('swoole_websocket.handler');
 
+
         if (!$handlerClass) {
-            throw new WebsocketNotSetInConfigException;
+            throw new \RuntimeException(
+                'Websocket handler is not set in swoole_websocket config'
+            );
         }
 
         $this->setWebsocketHandler($this->app->make($handlerClass));
