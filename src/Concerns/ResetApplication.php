@@ -25,6 +25,12 @@ trait ResetApplication
     protected $resetters = [];
 
     /**
+     * @return Container
+     */
+    abstract public function getBaseApp() : Container;
+
+
+    /**
      * Set initial config.
      */
     protected function setInitialConfig()

@@ -135,7 +135,7 @@ class Sandbox
      *
      * @return \Illuminate\Container\Container
      */
-    public function getBaseApp()
+    public function getBaseApp() : Container
     {
         return $this->app;
     }
