@@ -2,6 +2,7 @@
 
 namespace SwooleTW\Http;
 
+use SwooleTW\Http\Coroutine\Connectors\MySqlConnector;
 use SwooleTW\Http\Helpers\FW;
 use Illuminate\Queue\QueueManager;
 use Swoole\Http\Server as HttpServer;
@@ -62,7 +63,7 @@ abstract class HttpServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    abstract protected function registerEventManager() : void;
+    abstract protected function registerEventManager(): void;
 
     /**
      * Register manager.
@@ -93,7 +94,7 @@ abstract class HttpServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__. '/../config/swoole_cache.php' => base_path('config/swoole_cache.php'),
+            __DIR__ . '/../config/swoole_cache.php' => base_path('config/swoole_cache.php'),
             __DIR__ . '/../config/swoole_http.php' => base_path('config/swoole_http.php'),
             __DIR__ . '/../config/swoole_websocket.php' => base_path('config/swoole_websocket.php'),
             __DIR__ . '/../routes/websocket.php' => base_path('routes/websocket.php'),
@@ -163,7 +164,7 @@ abstract class HttpServiceProvider extends ServiceProvider
 
         // only enable task worker in websocket mode and for queue driver
         //if ($config->get('queue.default') !== 'swoole' && ! $this->isWebsocket) {
-            //unset($options['task_worker_num']);
+        //unset($options['task_worker_num']);
         //}
 
         static::$server->set($options);
@@ -222,19 +223,19 @@ abstract class HttpServiceProvider extends ServiceProvider
      *
      * @return \PDO
      */
-    protected function getNewMySqlConnection(array $config, string $connection = null)
+    protected function getNewMySqlConnection(array $config, string $connection = null): \PDO
     {
         if ($connection && isset($config[$connection])) {
             $config = array_merge($config, $config[$connection]);
         }
 
-        return ConnectorFactory::make(FW::version())->connect($config);
+        return (new MySqlConnector())->connect($config);
     }
 
     /**
      * Register queue driver for swoole async task.
      */
-    protected function registerSwooleQueueDriver() : void
+    protected function registerSwooleQueueDriver(): void
     {
 
         $this->app->afterResolving('queue', function (QueueManager $manager) {
