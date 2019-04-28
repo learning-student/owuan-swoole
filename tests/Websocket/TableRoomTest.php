@@ -11,7 +11,7 @@ class TableRoomTest extends TestCase
 {
     protected $tableRoom;
 
-    public function setUp()
+    protected function setUp() : void
     {
         $config = [
             'room_rows' => 4096,

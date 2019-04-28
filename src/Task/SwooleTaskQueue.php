@@ -5,7 +5,7 @@ namespace SwooleTW\Http\Task;
 use Exception;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 use Illuminate\Queue\Queue;
-use Swoole\Timer;
+use SwooleTW\Http\Task\Timer\SwooleTimer;
 
 /**
  * Class SwooleTaskQueue (5.7)
@@ -20,21 +20,50 @@ class SwooleTaskQueue extends Queue implements QueueContract
     protected $swoole;
 
     /**
+     * @var TimerInterface
+     */
+    protected $timer;
+
+    /**
      * Create Async Task instance.
      *
      * @param \Swoole\Http\Server $swoole
+     * @param TimerInterface $timer
      */
-    public function __construct($swoole)
+    public function __construct($swoole, TimerInterface $timer = null)
     {
         $this->swoole = $swoole;
+
+        if (!$timer) {
+            $this->setTimer(new SwooleTimer());
+        }
     }
+
+    /**
+     * @return TimerInterface
+     */
+    public function getTimer(): TimerInterface
+    {
+        return $this->timer;
+    }
+
+    /**
+     * @param TimerInterface $timer
+     * @return SwooleTaskQueue
+     */
+    public function setTimer(TimerInterface $timer): SwooleTaskQueue
+    {
+        $this->timer = $timer;
+        return $this;
+    }
+
 
     /**
      * Push a new job onto the queue.
      *
-     * @param  string|object $job
-     * @param  mixed $data
-     * @param  string $queue
+     * @param string|object $job
+     * @param mixed $data
+     * @param string $queue
      *
      * @return mixed
      */
@@ -46,40 +75,44 @@ class SwooleTaskQueue extends Queue implements QueueContract
     /**
      * Push a raw payload onto the queue.
      *
-     * @param  string $payload
-     * @param  string $queue
-     * @param  array $options
+     * @param string $payload
+     * @param string $queue
+     * @param array $options
      *
      * @return mixed
      */
     public function pushRaw($payload, $queue = null, array $options = [])
     {
-        return $this->swoole->task($payload, ! is_numeric($queue) ? -1 : (int)$queue);
+        return $this->swoole->task($payload, !is_numeric($queue) ? -1 : (int)$queue);
     }
 
     /**
      * Push a new job onto the queue after a delay.
      *
-     * @param  \DateTimeInterface|\DateInterval|int $delay
-     * @param  string|object $job
-     * @param  mixed $data
-     * @param  string $queue
+     * @param \DateTimeInterface|\DateInterval|int $delay
+     * @param string|object $job
+     * @param mixed $data
+     * @param string $queue
      *
-     * @return mixed
+     * @return void
      */
-    public function later($delay, $job, $data = '', $queue = null)
+    public function later($delay, $job, $data = '', $queue = null): void
     {
-        return Timer::after($this->secondsUntil($delay) * 1000, function () use ($job, $data, $queue) {
-            return $this->push($job, $data, $queue);
-        });
+        $this->getTimer()->after(
+            $this->secondsUntil($delay),
+            function () use ($job, $data, $queue) {
+                return $this->push($job, $data, $queue);
+            }
+        );
+
     }
 
     /**
      * Create a typical, string based queue payload array.
      *
-     * @param  string $job
-     * @param  string $queue
-     * @param  mixed $data
+     * @param string $job
+     * @param string $queue
+     * @param mixed $data
      *
      * @throws \Exception
      */
@@ -91,7 +124,7 @@ class SwooleTaskQueue extends Queue implements QueueContract
     /**
      * Get the size of the queue.
      *
-     * @param  string $queue
+     * @param string $queue
      *
      * @return int
      */
@@ -103,7 +136,7 @@ class SwooleTaskQueue extends Queue implements QueueContract
     /**
      * Pop the next job off of the queue.
      *
-     * @param  string $queue
+     * @param string $queue
      *
      * @return \Illuminate\Contracts\Queue\Job|null
      */

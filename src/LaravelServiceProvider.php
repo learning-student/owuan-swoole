@@ -6,6 +6,7 @@ use SwooleTW\Http\Event\Event;
 use SwooleTW\Http\Server\Manager;
 use Illuminate\Contracts\Http\Kernel;
 use SwooleTW\Http\Middleware\AccessLog;
+use SwooleTW\Http\Table\SwooleTable;
 
 /**
  * @codeCoverageIgnore
@@ -35,6 +36,24 @@ class LaravelServiceProvider extends HttpServiceProvider
         });
 
         $this->app->alias(Manager::class, 'swoole.manager');
+
+    }
+
+
+    /**
+     *
+     */
+    protected function registerSwooleTable() : void
+    {
+
+        $tables = $this->app->make('config')->get('swoole_http.tables', []);
+
+
+        $this->app->singleton(SwooleTable::class, function () use($tables){
+            return new SwooleTable($tables);
+        });
+
+        $this->app->alias(SwooleTable::class, 'swoole.table');
     }
 
     /**

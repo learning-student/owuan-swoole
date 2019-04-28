@@ -5,6 +5,7 @@ namespace SwooleTW\Http;
 use SwooleTW\Http\Event\Event;
 use SwooleTW\Http\Server\Manager;
 use SwooleTW\Http\Middleware\AccessLog;
+use SwooleTW\Http\Table\SwooleTable;
 
 /**
  * @codeCoverageIgnore
@@ -20,6 +21,21 @@ class LumenServiceProvider extends HttpServiceProvider
         $this->app->singleton(Event::class, Event::class);
         $this->app->alias(Event::class, 'swoole.event');
 
+    }
+
+    /**
+     *
+     */
+    protected function registerSwooleTable(): void
+    {
+        $tables = $this->app->make('config')->get('swoole_http.tables', []);
+
+
+        $this->app->singleton(SwooleTable::class, function () use($tables){
+            return new SwooleTable($tables);
+        });
+
+        $this->app->alias(SwooleTable::class, 'swoole.table');
     }
 
     /**

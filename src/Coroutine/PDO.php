@@ -130,7 +130,7 @@ class PDO extends BasePDO
      */
     public static function checkDriver(string $driver)
     {
-        if (! in_array($driver, static::getAvailableDrivers())) {
+        if (! in_array($driver, static::getAvailableDrivers(), true)) {
             throw new \InvalidArgumentException("{$driver} driver is not supported yet.");
         }
     }

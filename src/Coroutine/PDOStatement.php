@@ -125,7 +125,7 @@ class PDOStatement extends BaseStatement
         $this->fetchStyle = $fetchStyle;
     }
 
-    private function __executeWhenStringQueryEmpty()
+    private function executeWhenStringQueryEmpty()
     {
         if (is_string($this->statement) && empty($this->resultSet)) {
             $this->resultSet = $this->parent->client->query($this->statement);
@@ -202,7 +202,7 @@ class PDOStatement extends BaseStatement
         $fetchArgument = null
     )
     {
-        $this->__executeWhenStringQueryEmpty();
+        $this->executeWhenStringQueryEmpty();
 
         $cursorOrientation = is_null($cursorOrientation) ? PDO::FETCH_ORI_NEXT : $cursorOrientation;
         $cursorOffset = is_null($cursorOffset) ? 0 : (int) $cursorOffset;
@@ -246,14 +246,16 @@ class PDOStatement extends BaseStatement
     public function fetchColumn($columnNumber = null)
     {
         $columnNumber = is_null($columnNumber) ? 0 : $columnNumber;
-        $this->__executeWhenStringQueryEmpty();
+        $this->executeWhenStringQueryEmpty();
 
         return $this->fetch(PDO::FETCH_COLUMN, PDO::FETCH_ORI_NEXT, 0, $columnNumber);
     }
 
+
     public function fetchAll($fetchStyle = null, $fetchArgument = null, $ctorArgs = null)
     {
-        $this->__executeWhenStringQueryEmpty();
+        $this->executeWhenStringQueryEmpty();
+
         $resultSet = $this->transStyle($this->resultSet, $fetchStyle, $fetchArgument, $ctorArgs);
         $this->resultSet = [];
 

@@ -16,7 +16,7 @@ class ResponseTest extends TestCase
 
     private $mock;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->mock = \Mockery::mock('alias:SwooleTW\Http\Helpers\Response');
 

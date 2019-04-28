@@ -6,12 +6,44 @@ use Swoole\Table;
 
 class SwooleTable
 {
+
     /**
-     * Registered swoole tables.
-     *
-     * @var array
+     * @var  array
      */
     protected $tables = [];
+
+    /**
+     * SwooleTable constructor.
+     * @param array $tables
+     */
+    public function __construct(array $tables = [])
+    {
+        $this->registerTables($tables);
+    }
+
+    /**
+     * Register user-defined swoole tables.
+     * @param array $tables
+     */
+    protected function registerTables(array $tables)
+    {
+
+        foreach ($tables as $key => $value) {
+            $table = new Table($value['size']);
+            $columns = $value['columns'] ?? [];
+            foreach ($columns as $column) {
+                if (isset($column['size'])) {
+                    $table->column($column['name'], $column['type'], $column['size']);
+                } else {
+                    $table->column($column['name'], $column['type']);
+                }
+            }
+            $table->create();
+
+            $this->add($key, $table);
+        }
+    }
+
 
     /**
      * Add a swoole table to existing tables.
@@ -53,7 +85,7 @@ class SwooleTable
     /**
      * Dynamically access table.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return table
      */
@@ -61,4 +93,23 @@ class SwooleTable
     {
         return $this->get($key);
     }
+
+    /**
+     * @return array
+     */
+    public function getTables(): array
+    {
+        return $this->tables;
+    }
+
+    /**
+     * @param array $tables
+     * @return SwooleTable
+     */
+    public function setTables(array $tables): SwooleTable
+    {
+        $this->tables = $tables;
+        return $this;
+    }
+
 }

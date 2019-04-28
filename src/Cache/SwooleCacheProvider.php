@@ -25,7 +25,7 @@ class SwooleCacheProvider extends ServiceProvider
             $this->app->configure('swoole_cache');
         }
 
-        $config = $this->app->make('config')->get('swoole_cache');
+        $config = $this->app->make('config')->get('swoole_cache', []);
 
         $caching = new Caching($config);
 
@@ -33,6 +33,8 @@ class SwooleCacheProvider extends ServiceProvider
         $this->app->singleton(Caching::class, function () use ($caching) {
             return $caching;
         });
+
+        $this->app->alias(Caching::class, 'swoole.caching');
 
         /**
          * add caching pre-event

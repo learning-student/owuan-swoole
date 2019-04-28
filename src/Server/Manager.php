@@ -21,7 +21,6 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use SwooleTW\Http\Concerns\InteractsWithWebsocket;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use SwooleTW\Http\Concerns\InteractsWithSwooleQueue;
-use SwooleTW\Http\Concerns\InteractsWithSwooleTable;
 use Symfony\Component\Debug\Exception\FatalThrowableError;
 use SwooleTW\Http\Event\EventBase;
 
@@ -31,7 +30,6 @@ use SwooleTW\Http\Event\EventBase;
 class Manager extends Event
 {
     use InteractsWithWebsocket,
-        InteractsWithSwooleTable,
         InteractsWithSwooleQueue,
         WithApplication;
 
@@ -124,7 +122,6 @@ class Manager extends Event
             return null;
         }
 
-        $this->createTables();
         $this->prepareWebsocket();
         $this->setSwooleServerListeners();
 
@@ -372,7 +369,6 @@ class Manager extends Event
     protected function bindToLaravelApp()
     {
         $this->bindSandbox();
-        $this->bindSwooleTable();
 
         if ($this->isServerWebsocket) {
             $this->bindRoom();

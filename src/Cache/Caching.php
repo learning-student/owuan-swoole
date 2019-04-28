@@ -21,7 +21,7 @@ class Caching
     /**
      * @var array
      */
-    private  $cacheRoutes = [];
+    private $cacheRoutes = [];
 
     /**
      * @var  Cache
@@ -49,12 +49,21 @@ class Caching
      * @param string $add
      * @return $this
      */
-    public function cacheRoute(string $add) : self
+    public function cacheRoute(string $add): self
     {
         $this->cacheRoutes[] = $add;
 
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getCacheRoutes(): array
+    {
+        return $this->cacheRoutes;
+    }
+
 
     /**
      * @param array $config
@@ -70,9 +79,12 @@ class Caching
         // get the driver configurations
         $driverConfig = $config['drivers'][$driver] ?? [];
 
-        $this->caching = new Cache(
-            $driverConfig,
-            $driver
+
+        $this->setCaching(
+            new Cache(
+                $driverConfig,
+                $driver
+            )
         );
     }
 
@@ -83,6 +95,7 @@ class Caching
      */
     private function checkRequestShouldBeCached($request): bool
     {
+
         return mb_convert_case($request->server['request_method'], MB_CASE_LOWER) === "get";
 
     }
@@ -96,6 +109,7 @@ class Caching
         if (!$this->checkRequestShouldBeCached($request)) {
             return false;
         }
+
 
         $uri = $request->server['request_uri'];
 
@@ -153,6 +167,7 @@ class Caching
     public function cachePostEvent(): callable
     {
         return function ($swooleRequest, $swooleResponse, $laravelRequest, Response $laravelResponse) {
+
             if (!$this->checkRequestShouldBeCached($swooleRequest) || !$this->checkAllCachedRoutes($laravelRequest)) {
                 return false;
             }
@@ -168,4 +183,23 @@ class Caching
             return true;
         };
     }
+
+    /**
+     * @return Cache
+     */
+    public function getCaching(): Cache
+    {
+        return $this->caching;
+    }
+
+    /**
+     * @param Cache $caching
+     * @return Caching
+     */
+    public function setCaching(Cache $caching): Caching
+    {
+        $this->caching = $caching;
+        return $this;
+    }
+
 }

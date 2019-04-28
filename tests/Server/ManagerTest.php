@@ -701,6 +701,12 @@ class ManagerTest extends TestCase
         $container->alias(Server::class, 'swoole.server');
         $container->singleton(ExceptionHandler::class, Handler::class);
 
+        $container->singleton(SwooleTable::class, function () {
+            return new SwooleTable();
+        });
+
+        $container->alias(SwooleTable::class, 'swoole.table');
+
         return $container;
     }
 

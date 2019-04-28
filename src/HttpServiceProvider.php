@@ -50,8 +50,11 @@ abstract class HttpServiceProvider extends ServiceProvider
         $this->registerCommands();
         $this->registerDatabaseDriver();
         $this->registerSwooleQueueDriver();
+        $this->registerSwooleTable();
 
     }
+
+    abstract protected function registerSwooleTable(): void;
 
 
     /**
@@ -231,12 +234,14 @@ abstract class HttpServiceProvider extends ServiceProvider
     /**
      * Register queue driver for swoole async task.
      */
-    protected function registerSwooleQueueDriver()
+    protected function registerSwooleQueueDriver() : void
     {
+
         $this->app->afterResolving('queue', function (QueueManager $manager) {
             $manager->addConnector('swoole', function () {
                 return new SwooleTaskConnector($this->app->make(Server::class));
             });
+
         });
     }
 }
