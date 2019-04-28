@@ -3,6 +3,7 @@
 namespace SwooleTW\Http\Server;
 
 use Exception;
+use Illuminate\Contracts\Events\Dispatcher;
 use function PHPSTORM_META\override;
 use Throwable;
 use Swoole\Process;
@@ -138,7 +139,14 @@ class Manager extends Event
             $listener = Str::camel("on_$event");
 
             $callback = method_exists($this, $listener) ? [$this, $listener] : function () use ($event) {
-                $this->container->make('events')->dispatch("swoole.$event", func_get_args());
+
+                /**
+                 * @var $eventBase Dispatcher
+                 */
+
+                $eventBase = $this->container->make('events');
+
+                $eventBase->dispatch("swoole.$event", func_get_args());
             };
 
             $this->container->make(Server::class)->on($event, $callback);
@@ -312,7 +320,7 @@ class Manager extends Event
      * @param string|\Swoole\Server\Task $taskId or $task
      * @param string $srcWorkerId
      * @param mixed $data
-     * @throws 
+     * @throws
      */
     public function onTask($server, $taskId, $srcWorkerId, $data)
     {
