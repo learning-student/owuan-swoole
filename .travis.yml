@@ -29,7 +29,6 @@ install:
   - travis_retry composer install --no-suggest --prefer-dist -n -o
 
 script:
-  - bin/atoum --test-all
   - mkdir -p build/logs
   - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 

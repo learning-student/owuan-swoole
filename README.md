@@ -1,6 +1,8 @@
 # Laravel-Swoole
 
-![php-badge](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg)
+[![Coverage Status](https://coveralls.io/repos/github/learning-student/owuan-swoole/badge.svg?branch=master)](https://coveralls.io/github/learning-student/owuan-swoole?branch=master)
+![php-badge](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg)
+
 [![packagist-badge](https://img.shields.io/packagist/v/swooletw/laravel-swoole.svg)](https://packagist.org/packages/swooletw/laravel-swoole)
 [![Total Downloads](https://poser.pugx.org/swooletw/laravel-swoole/downloads)](https://packagist.org/packages/swooletw/laravel-swoole)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swooletw/laravel-swoole/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swooletw/laravel-swoole/?branch=master)
