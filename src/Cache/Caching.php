@@ -139,6 +139,7 @@ class Caching
      */
     public function cachePreEvent(): callable
     {
+
         return function ($request) {
 
 
@@ -176,6 +177,7 @@ class Caching
      */
     public function cachePostEvent(): callable
     {
+
         return function ($swooleRequest, $swooleResponse, $laravelRequest, Response $laravelResponse) {
 
             if (!$this->checkRequestShouldBeCached($swooleRequest) || !$this->checkAllCachedRoutes($laravelRequest)) {
