@@ -4,11 +4,7 @@
 namespace SwooleTW\Http\Cache;
 
 use Anonym\Components\Cache\Cache;
-use Anonym\Components\Cache\CacheInterface;
-use Anonym\Components\Cache\DriverAdapterInterface;
 use Anonym\Components\Cache\DriverNotInstalledException;
-use function foo\func;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
@@ -121,14 +117,22 @@ class Caching
     /**
      * @param $request
      * @return Response
+     * @throws \RuntimeException
      */
     private function getCachedResponse($request): Response
     {
         $uri = $request->server['request_uri'];
 
-        return $this->caching->get($uri);
+        $response = $this->caching->get($uri);
 
+
+        if (!$response instanceof Response) {
+            throw new \RuntimeException('Cache removed');
+        }
+
+        return $response;
     }
+
 
     /**
      * @return \Closure
@@ -137,11 +141,17 @@ class Caching
     {
         return function ($request) {
 
+
             if (!$this->checkCacheExists($request)) {
                 return false;
             }
 
-            return $this->getCachedResponse($request);
+            try {
+                return $this->getCachedResponse($request);
+
+            } catch (\RuntimeException $exception) {
+                return false;
+            }
 
         };
     }

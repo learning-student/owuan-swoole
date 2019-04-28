@@ -4,6 +4,15 @@ use SwooleTW\Http\Event\EventBase;
 use App\Events\Event;
 
 /**
+ *  if swoole_version not provided,
+ */
+if (!function_exists('swoole_version')) {
+    function swoole_version(): string {
+        return '0';
+    }
+}
+
+/**
  * This is only for `function not exists` in config/swoole_http.php.
  */
 if (!function_exists('swoole_cpu_num')) {

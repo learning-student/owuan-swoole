@@ -65,7 +65,11 @@ class HttpServerCommand extends Command
      */
     public function handle()
     {
-        $this->checkEnvironment();
+        if (!$this->checkEnvironment()) {
+            return;
+        }
+
+
         $this->loadConfigs();
         $this->initAction();
         $this->runAction();
@@ -135,7 +139,7 @@ class HttpServerCommand extends Command
     {
         $pid = $this->getCurrentPid();
 
-        if (! $this->isRunning($pid)) {
+        if (!$this->isRunning($pid)) {
             $this->error("Failed! There is no swoole_http_server process running.");
 
             return;
@@ -179,7 +183,7 @@ class HttpServerCommand extends Command
     {
         $pid = $this->getCurrentPid();
 
-        if (! $this->isRunning($pid)) {
+        if (!$this->isRunning($pid)) {
             $this->error("Failed! There is no swoole_http_server process running.");
 
             return;
@@ -189,7 +193,7 @@ class HttpServerCommand extends Command
 
         $isRunning = $this->killProcess($pid, SIGUSR1);
 
-        if (! $isRunning) {
+        if (!$isRunning) {
             $this->error('> failure');
 
             return;
@@ -246,7 +250,7 @@ class HttpServerCommand extends Command
     {
         $this->action = $this->argument('action');
 
-        if (! in_array($this->action, ['start', 'stop', 'restart', 'reload', 'infos'], true)) {
+        if (!in_array($this->action, ['start', 'stop', 'restart', 'reload', 'infos'], true)) {
             $this->error(
                 "Invalid argument '{$this->action}'. Expected 'start', 'stop', 'restart', 'reload' or 'infos'."
             );
@@ -256,12 +260,13 @@ class HttpServerCommand extends Command
     }
 
     /**
-     * @param \SwooleTW\Http\Server\Facades\Server $server
+     * @param Server $server
      *
      * @return \Swoole\Process
      */
     protected function getHotReloadProcess($server)
     {
+
         $recursively = Arr::get($this->config, 'hot_reload.recursively');
         $directory = Arr::get($this->config, 'hot_reload.directory');
         $filter = Arr::get($this->config, 'hot_reload.filter');
@@ -284,7 +289,7 @@ class HttpServerCommand extends Command
      */
     protected function isRunning($pid)
     {
-        if (! $pid) {
+        if (!$pid) {
             return false;
         }
 
@@ -312,7 +317,7 @@ class HttpServerCommand extends Command
             $start = time();
 
             do {
-                if (! $this->isRunning($pid)) {
+                if (!$this->isRunning($pid)) {
                     break;
                 }
 
@@ -337,7 +342,7 @@ class HttpServerCommand extends Command
         $path = $this->getPidPath();
 
         return $this->currentPid = file_exists($path)
-            ? (int) file_get_contents($path) ?? $this->removePidFile()
+            ? (int)file_get_contents($path) ?? $this->removePidFile()
             : null;
     }
 
@@ -372,25 +377,28 @@ class HttpServerCommand extends Command
     /**
      * Check running enironment.
      */
-    protected function checkEnvironment()
+    protected function checkEnvironment(): bool
     {
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $this->error("Swoole extension doesn't support Windows OS yet.");
 
-            exit(1);
+            return false;
         }
 
-        if (! extension_loaded('swoole')) {
+        if (!extension_loaded('swoole')) {
             $this->error("Can't detect Swoole extension installed.");
 
-            exit(1);
+            return false;
         }
 
-        if (! version_compare(swoole_version(), '4.0.0', 'ge')) {
+        if (!version_compare(swoole_version(), '4.0.0', 'ge')) {
             $this->error("Your Swoole version must be higher than 4.0 to use coroutine.");
 
-            exit(1);
+            return false;
         }
+
+        return true;
+
     }
 
     /**

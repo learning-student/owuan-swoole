@@ -5,9 +5,7 @@
 
 [![packagist-badge](https://img.shields.io/packagist/v/swooletw/laravel-swoole.svg)](https://packagist.org/packages/swooletw/laravel-swoole)
 [![Total Downloads](https://poser.pugx.org/swooletw/laravel-swoole/downloads)](https://packagist.org/packages/swooletw/laravel-swoole)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swooletw/laravel-swoole/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swooletw/laravel-swoole/?branch=master)
-[![travis-badge](https://api.travis-ci.org/swooletw/laravel-swoole.svg?branch=master)](https://travis-ci.org/swooletw/laravel-swoole)
-
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/learning-student/owuan-swoole/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/learning-student/owuan-swoole/?branch=master)[![Build Status](https://travis-ci.com/learning-student/owuan-swoole.svg?branch=master)](https://travis-ci.com/learning-student/owuan-swoole)
 This package provides a high performance HTTP server to speed up your Laravel/Lumen application based on [Swoole](http://www.swoole.com/).
 
 ## Version Compatibility

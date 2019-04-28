@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
  * Class Server
  *
  * @mixin \Swoole\Http\Server
+ * @method void reload()
  */
 class Server extends Facade
 {
