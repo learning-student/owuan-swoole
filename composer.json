@@ -76,9 +76,6 @@
     }
   },
   "scripts": {
-    "post-autoload-dump": [
-      "@php copy_versioned_files.php"
-    ],
     "post-package-install": [
       "SwooleTW\\Http\\Scrips\\ComposerScripts::postUpdate"
     ],
