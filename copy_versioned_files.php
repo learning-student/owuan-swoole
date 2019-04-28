@@ -13,7 +13,6 @@ try {
     echo "No files were generated.\n";
     die;
 }
-
 $color = "\033[0;32m";
 $noColor = "\033[0m";
 $stubs = [];
